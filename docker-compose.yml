@@ -14,7 +14,7 @@ services:
       - "5432:5432"
     
     # to activate WAL 
-    command: postgres -c wal_level=replica -c archive_mode=on -c archive_command=copy -c max_wal_senders=5
+    command: postgres -c wal_level=replica -c archive_mode=on -c max_wal_senders=5
     
     volumes:
       - ./PostgresDB:/docker-entrypoint-initdb.d/
