@@ -1,5 +1,5 @@
 #!/bin/bash
-psql -U postgres -d anonprofile
+psql -U postgres -d $POSTGRES_DB
     \c $POSTGRES_DB;
     BEGIN;
         CREATE TABLE anon_profiles (id SERIAL PRIMARY KEY, profiledata JSON );
