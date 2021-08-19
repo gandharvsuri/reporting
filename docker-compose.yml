@@ -1,0 +1,23 @@
+version: '2.2'
+
+services: 
+  postgres:
+    image: postgres:latest
+    
+    restart: always
+
+    environment:
+      POSTGRES_PASSWORD: psudopass
+      POSTGRES_DB: anonprofile
+
+    ports: 
+      - "5432:5432"
+    
+    # to activate WAL 
+    command: postgres -c wal_level=replica -c archive_mode=on -c archive_command=copy -c max_wal_senders=5
+    
+    volumes:
+      - ./PostgresDB:/docker-entrypoint-initdb.d/
+  
+  
+
