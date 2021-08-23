@@ -2,12 +2,18 @@ version: '2.2'
 
 services: 
   postgres:
-    image: postgres:latest
-    
+    image: debezium/postgres
+    container_name: postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+
     restart: always
 
     environment:
-      POSTGRES_PASSWORD: psudopass
+      POSTGRES_PASSWORD: mosip123
       POSTGRES_DB: anonprofile
 
     ports: 
@@ -19,5 +25,47 @@ services:
     volumes:
       - ./PostgresDB:/docker-entrypoint-initdb.d/
   
-  
+  zookeeper:
+    image: debezium/zookeeper
+    container_name: zookeeper
 
+    ports: 
+      - "2181:2181"  
+      - "2888:2888" 
+      - "3888:3888"
+    
+    stdin_open: true
+    tty: true
+
+  kafka:
+    image: debezium/kafka
+    container_name: kafka
+
+    ports: 
+      - "9092:9092"
+    
+    stdin_open: true
+    tty: true
+    links:
+     - "zookeeper:zookeeper"
+  
+  connect:
+    image: debezium/connect
+    container_name: connect
+
+    ports:
+      - "8083:8083"
+    
+    environment:
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: my_connect_configs
+      OFFSET_STORAGE_TOPIC: my_connect_offsets
+      STATUS_STORAGE_TOPIC: my_connect_statuses
+    
+    stdin_open: true
+    tty: true
+    
+    links:
+      - "zookeeper:zookeeper" 
+      - "postgres:postgres"  
+      - "kafka:kafka"
