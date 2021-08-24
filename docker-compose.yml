@@ -92,13 +92,13 @@ services:
       - postgres:postgres  
       - kafka:kafka
 
-      jupyterlab:
-        image: spark/jupiterlab:v1
-        container_name: jupyterlab
-        ports:
-         - 8888:8888
-        volumes:
-         - shared-workspace:/opt/workspace
+  jupyterlab:
+    image: spark/jupiterlab:v1
+    container_name: jupyterlab
+    ports:
+     - 8888:8888
+    volumes:
+     - shared-workspace:/opt/workspace
         
 
   spark-master:
