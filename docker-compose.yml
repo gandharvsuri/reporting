@@ -1,9 +1,5 @@
 version: '2.2'
 
-networks:
-  reporting-network:
-    external: true
-    
 volumes:
   shared-workspace:
     name: "hadoop-distributed-file-system"
@@ -21,13 +17,14 @@ services:
 
     environment:
       - POSTGRES_PASSWORD=mosip123
+      - PGDATA=/data/pgdata
       - POSTGRES_DB=anonprofile
 
     ports: 
       - 5432:5432
     
     # to activate WAL 
-    command: postgres -c wal_level=logical -c archive_mode=on -c max_wal_senders=5
+    # command: postgres -c wal_level=logical -c archive_mode=on -c max_wal_senders=5
     
     volumes:
       - shared-workspace:/opt/workspace
@@ -42,7 +39,7 @@ services:
       - 2181:2181
       - 2888:2888 
       - 3888:3888
-    
+
     stdin_open: true
     tty: true
 
@@ -56,16 +53,17 @@ services:
     ports: 
       - 9092:9092
     
+    links: 
+      - zookeeper:zookeeper
+      
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
 
     stdin_open: true
     tty: true
-    links:
-     - zookeeper:zookeeper
   
   connect:
-    image: debezium/connect
+    image: debezium/connect   
     container_name: connect
     depends_on: 
       - postgres
@@ -78,10 +76,10 @@ services:
     
     environment:
       - GROUP_ID=1
-      - CONFIG_STORAGE_TOPIC=my-connect-configs
-      - OFFSET_STORAGE_TOPIC=my-connect-offsets
-      - STATUS_STORAGE_TOPIC=my-connect-statuses
-      - ADVERTISED_HOST_NAME=connect
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+      - ADVERTISED_HOST_NAME=kafka
       - BOOTSTRAP_SERVERS=kafka:9092
     
     stdin_open: true
@@ -115,7 +113,7 @@ services:
        - 7077:7077
       volumes:
        - shared-workspace:/opt/workspace
-  
+       - ./src:/usr/bin/spark-2.4.0-bin-hadoop2.7/examples/
   
   spark-worker-1:
       image: spark/sparkworker:v1

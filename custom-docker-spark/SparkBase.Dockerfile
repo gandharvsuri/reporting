@@ -2,7 +2,7 @@ FROM spark/clusterbase:v1
 
 # -- Layer: Apache Spark
 
-ARG spark_version= 2.4.0
+ARG spark_version=2.4.0
 ARG hadoop_version=2.7
 
 RUN apt-get update -y && \
@@ -19,7 +19,7 @@ RUN apt-get install -y python3-pip
 RUN pip3 install elasticsearch
 RUN	pip3 install jproperties
 RUN	pip3 install kafka-python
-RUN	pip3 install pyspark
+RUN	pip3 install pyspark==2.4.0
 RUN	pip3 install configparser
 ENV SPARK_HOME /usr/bin/spark-2.4.0-bin-hadoop2.7
 #ENV SPARK_HOME /usr/bin/spark-${spark_version}-bin-hadoop${hadoop_version}

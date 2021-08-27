@@ -4,7 +4,7 @@ FROM openjdk:${debian_buster_image_tag}
 # -- Layer: OS + Python 3.7
 
 ARG shared_workspace=/opt/workspace
-
+RUN mkdir src
 
 RUN mkdir -p ${shared_workspace} && \
     apt-get update -y && apt-get upgrade && \
