@@ -1,4 +1,4 @@
-version: '2.2'
+version: '3.8'
 
 volumes:
   shared-workspace:
@@ -7,88 +7,67 @@ volumes:
     
 services: 
   postgres:
+    restart: always
     image: debezium/postgres
     container_name: postgres
-    depends_on: 
-      - zookeeper
-      - kafka
-
-    restart: always
-
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=mosip123
-      - PGDATA=/data/pgdata
       - POSTGRES_DB=anonprofile
-
-    ports: 
-      - 5432:5432
-    
     # to activate WAL 
     # command: postgres -c wal_level=logical -c archive_mode=on -c max_wal_senders=5
     
     volumes:
       - shared-workspace:/opt/workspace
-      - ./PostgresDB:/docker-entrypoint-initdb.d/
+      - ./PostgresDB:/setup
   
   zookeeper:
     image: debezium/zookeeper
     container_name: zookeeper
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+    container_name: zookeeper
     volumes:
       - shared-workspace:/opt/workspace
-    ports: 
-      - 2181:2181
-      - 2888:2888 
-      - 3888:3888
-
-    stdin_open: true
-    tty: true
 
   kafka:
     image: debezium/kafka
     container_name: kafka
-    depends_on: 
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    depends_on:
       - zookeeper
-    volumes:
-      - shared-workspace:/opt/workspace    
-    ports: 
-      - 9092:9092
-    
-    links: 
-      - zookeeper:zookeeper
-      
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
-
-    stdin_open: true
-    tty: true
+      - KAFKA_ADVERTISED_LISTENERS=LISTENER_EXT://localhost:29092,LISTENER_INT://kafka:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=LISTENER_INT:PLAINTEXT,LISTENER_EXT:PLAINTEXT
+      - KAFKA_LISTENERS=LISTENER_INT://0.0.0.0:9092,LISTENER_EXT://0.0.0.0:29092
+      - KAFKA_INTER_BROKER_LISTENER_NAME=LISTENER_INT
+      - KAFAK_AUTO_CREATE_TOPICS_ENABLE=true
+    volumes:
+      - shared-workspace:/opt/workspace    
   
   connect:
-    image: debezium/connect   
+    image: debezium/connect
     container_name: connect
-    depends_on: 
-      - postgres
-      - zookeeper
-      - kafka
-    volumes:
-      - shared-workspace:/opt/workspace
     ports:
-      - 8083:8083
-    
+      - "8083:8083"
     environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
       - GROUP_ID=1
       - CONFIG_STORAGE_TOPIC=my_connect_configs
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
       - STATUS_STORAGE_TOPIC=my_connect_statuses
-      - ADVERTISED_HOST_NAME=kafka
-      - BOOTSTRAP_SERVERS=kafka:9092
-    
-    stdin_open: true
-    tty: true
-    
-    links:
-      - zookeeper:zookeeper
-      - postgres:postgres  
-      - kafka:kafka
+      - CONNECT_TOPIC_CREATION_ENABLE=true
+    depends_on:
+      - zookeeper
+      - kafka
+    volumes:
+      - shared-workspace:/opt/workspace
 
   jupyterlab:
     image: spark/jupiterlab:v1

@@ -1,22 +1,25 @@
-{ "name": "anonprofile_connector",
+{ "name": "anonprofile-connector",
   "config": {
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
     "tasks.max": "1",
     "database.hostname": "postgres",
-    "plugin.name": "wal2json",
     "database.port": "5432",
     "database.user": "postgres",
     "database.password": "mosip123",
     "database.dbname" : "anonprofile",
     "database.server.name": "postgres",
-    "database.whitelist": "anonprofile",
-    "table.whitelist": "public.anon_profiles",
-    "database.history.kafka.bootstrap.servers": "kafka:9092",
-    "database.history.kafka.topic": "schema-changes.anonprofile",
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "false",
     "value.converter.schemas.enable": "false",
-    "snapshot.mode": "always"
+    "database.history.kafka.topic": "schema-changes.anon_profiles",
+    "plugin.name": "wal2json",
+    "publication.autocreate.mode": "all_tables",
+    "publication.name": "my_publication",
+    "snapshot.mode": "always",
+    "topic.creation.enable": "true",
+    "topic.creation.default.replication.factor": 1,  
+    "topic.creation.default.partitions": 2,  
+    "topic.creation.default.cleanup.policy": "compact"
   }
 }
