@@ -34,7 +34,7 @@ if __name__ == "__main__":
      #dbRecord = kStream.map(lambda x: x[1])
      print(dbRecord)
      print("records mapped")
-     #dbRecord.count().map(lambda x:'profiles in this batch: %d' % x).pprint()
+     dbRecord.count().map(lambda x:'profiles in this batch: %d' % x).pprint()
      #dbRecord.pprint()
      dbRecord.foreachRDD(sendRecord)     
      #ssc.awaitTermination()
