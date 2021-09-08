@@ -20,9 +20,9 @@ RUN	mv spark-2.4.0-bin-hadoop2.7 /usr/bin && \
     mkdir /usr/bin/spark-2.4.0-bin-hadoop2.7/logs
 #rm spark.tgz
 
-RUN wget http://download.elastic.co/hadoop/elasticsearch-hadoop-6.1.1.zip
-RUN unzip elasticsearch-hadoop-6.1.1.zip
-RUN mv elasticsearch-hadoop-6.1.1 /usr/bin
+RUN wget https://artifacts.elastic.co/downloads/elasticsearch-hadoop/elasticsearch-hadoop-7.4.0.zip
+RUN unzip elasticsearch-hadoop-7.4.0.zip
+RUN mv elasticsearch-hadoop-7.4.0 /usr/bin/spark-2.4.0-bin-hadoop2.7
 
 RUN apt-get install -y python3-pip 
 RUN pip3 install elasticsearch
@@ -30,7 +30,7 @@ RUN	pip3 install jproperties
 RUN	pip3 install kafka-python
 RUN	pip3 install pyspark==2.4.0
 RUN	pip3 install configparser
-ENV SPARK_HOME /usr/bin/spark-2.4.6-bin-hadoop2.7
+ENV SPARK_HOME /usr/bin/spark-2.4.0-bin-hadoop2.7
 #ENV SPARK_HOME /usr/bin/spark-${spark_version}-bin-hadoop${hadoop_version}
 ENV SPARK_MASTER_HOST spark-master
 ENV SPARK_MASTER_PORT 7077
