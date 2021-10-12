@@ -1,0 +1,21 @@
+{ 
+    "name": "anonprofile-connector",
+    "config": {
+      "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+      "tasks.max": "1",
+      "database.hostname": "postgres",
+      "database.port": "5432",
+      "database.user": "postgres",
+      "database.password": "",
+      "database.dbname" : "anonprofile",
+      "database.server.name": "postgres",
+      "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "key.converter.schemas.enable": "false",
+      "value.converter.schemas.enable": "false",
+      "database.history.kafka.topic": "schema-changes.anon_profiles",
+      "plugin.name": "wal2json",
+      "publication.autocreate.mode": "all_tables",
+      "publication.name": "my_publication"
+    }
+}

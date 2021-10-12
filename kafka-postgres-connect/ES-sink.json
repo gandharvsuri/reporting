@@ -1,0 +1,12 @@
+{     "name": "ES_Sink",
+      "config": {
+          "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+          "connection.url": "elasticsearch:9200",
+          "tasks.max": "1",
+          "topics": "db_server_name.idrepo.anonymous_profile",
+          "key.ignore": "true",
+          "schema.ignore": "true",
+          "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+          "value.converter": "org.apache.kafka.connect.json.JsonConverter"
+        }
+}
